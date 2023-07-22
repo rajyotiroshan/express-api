@@ -1,13 +1,15 @@
 import express from "express";
 import morgan from "morgan";
-import router from "./router";
 import cors from "cors";
+import router from "./router";
+import { protect } from "./modules/auth";
+import { createNewUser, signin } from "./handlers/user";
 const app = express();
 
-const customLogger = (message) => (req, res, next) => {
+/* const customLogger = (message) => (req, res, next) => {
   console.log(`Hello from ${message}`);
   next();
-};
+}; */
 /**
  * Global middleware
  */
@@ -16,7 +18,7 @@ app.use(cors());
 app.use(morgan("dev"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(customLogger("custome logger"));
+//app.use(customLogger("custome logger"));
 
 //just block all req
 /* app.use((req, res, next) => {
@@ -36,6 +38,8 @@ app.get("/", (req, res, next) => {
   console.log("handler end");
 });
 
-app.use("/api", router);
+app.use("/api", protect, router);
+app.post("/user", createNewUser);
 
+app.post("/signin", signin);
 export default app;
