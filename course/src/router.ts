@@ -1,5 +1,6 @@
+import { error } from "console";
 import { Router } from "express";
-
+import { body, validationResult } from "express-validator";
 const router = Router();
 
 /**
@@ -9,7 +10,20 @@ router.get("/product", (req, res) => {
   res.json({ msg: "hello", secret: req.shh_secret });
 });
 router.get("/product/:id", () => {});
-router.put("/product/:id", () => {});
+/**
+ * Update the username
+ */
+router.put("/product/:id", body("name").isString(), (req, res) => {
+  console.log("product update");
+  const errors = validationResult(req);
+  console.log(errors);
+  if (!errors.isEmpty()) {
+    res.status(400);
+    res.json({ errors: errors.array() });
+    console.log("errors msg sent");
+  }
+});
+
 router.post("/product", () => {});
 router.delete("/product/:id", () => {});
 
