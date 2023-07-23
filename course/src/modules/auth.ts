@@ -44,6 +44,4 @@ export const protect = (req, res, next) => {
     console.log(e);
     return;
   }
-
-  res.json({ msg: "no Bearer" });
 };
