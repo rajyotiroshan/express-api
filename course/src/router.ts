@@ -1,16 +1,20 @@
-import { error } from "console";
 import { Router } from "express";
-import { body, validationResult, oneOf } from "express-validator";
+import { body } from "express-validator";
 import { handleInputErrors } from "./modules/middlewares";
+import {
+  createProduct,
+  deleteProduct,
+  getOneProduct,
+  getProducts,
+  updateProduct,
+} from "./handlers/products";
 const router = Router();
 
 /**
  * Poduct router
  */
-router.get("/product", (req, res) => {
-  res.json({ msg: "hello", secret: req.shh_secret });
-});
-router.get("/product/:id", () => {});
+router.get("/product", getProducts);
+router.get("/product/:id", getOneProduct);
 /**
  * Update the productname
  */
@@ -18,7 +22,7 @@ router.put(
   "/product/:id",
   body("name").isString(),
   handleInputErrors,
-  (req, res) => {}
+  updateProduct
 );
 
 /**
@@ -28,13 +32,18 @@ router.post(
   "/product",
   body("name").isString(),
   handleInputErrors,
-  (req, res) => {}
+  createProduct
 );
 
 /**
  * Delete a product
  */
-router.delete("/product/:id", () => {});
+router.delete("/product/:id", deleteProduct);
+
+/*********
+ * ***********
+ * ******
+ */
 
 /**
  * Update
