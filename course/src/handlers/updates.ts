@@ -44,14 +44,15 @@ export const getUpdates = async (req, res) => {
 };
 
 /**
- * @url post "/api/update/" body {prodId}
+ * @url post "/api/update/" body {prodID, title, body}
  * @param req
  * @param res
  */
 export const createUpdate = async (req, res) => {
+  const { prodID, ...rest } = req.body;
   const product = await prisma.product.findUnique({
     where: {
-      id: req.body.id,
+      id: req.body.prodID,
     },
   });
   if (!product) {
@@ -59,7 +60,14 @@ export const createUpdate = async (req, res) => {
   }
 
   const update = await prisma.update.create({
-    data: req.body,
+    data: {
+      body: rest.body,
+      title: rest.title,
+      updatedAt: new Date(),
+      product:{connect: {
+        id: product.id
+      }}
+    },
   });
 
   res.json({ data: update });
@@ -100,8 +108,8 @@ export const updateUpdate = async (req, res) => {
 
 /**
  * @url delete "/api/update/:updateid
- * @param req 
- * @param res 
+ * @param req
+ * @param res
  */
 export const deleteAnUpdate = async (req, res) => {
   const deletedUpdate = await prisma.update.delete({
