@@ -32,14 +32,33 @@ app.use((req, res, next) => {
 });
 
 app.get("/", (req, res, next) => {
+  /*   setTimeout(() => {
+    next(new Error("Hello error"));
+  }, 1000); */
+
+  /*   setTimeout(()=>{
+    throw new Error( "error")
+  }, 1000) */
+  //throw new Error("Synch Error handling");
   console.log("handler start");
-  res.status(200);
-  res.json({ message: "hello user" });
-  console.log("handler end");
+  res.status(200).json({ message: "hello user" });
 });
 
 app.use("/api", protect, router);
 app.post("/user", createNewUser);
 
 app.post("/signin", signin);
+
+//registered error handler for shynchronous request
+
+app.use((err, req, res, next) => {
+  console.log(err);
+  if (err.type === "auth") {
+    res.status(401).json({ msg: "Unauthorized" });
+  } else if (err.type === "input") {
+    res.status(400).json({ msg: "invalid input" });
+  } else {
+    res.status(500).json({ msg: "server side error" });
+  }
+});
 export default app;
