@@ -1,7 +1,7 @@
 import prisma from "../modules/db";
 import { comparePasswords, createJWT, hashPassword } from "../modules/auth";
 
-export const createNewUser = async (req, res) => {
+export const createNewUser = async (req, res, next) => {
   try {
     const user = await prisma.user.create({
       data: {
@@ -14,31 +14,34 @@ export const createNewUser = async (req, res) => {
 
     res.json({ token });
   } catch (err) {
-    res.status(401);
-    res.json(err);
-    return;
+    err.type = "input";
+    next(err);
   }
 };
 
-export const signin = async (req, res) => {
-  //find the user with username
-  const user = await prisma.user.findUnique({
-    where: {
-      username: req.body.username,
-    },
-  });
+export const signin = async (req, res, next) => {
+  try {
+    //find the user with username
+    const user = await prisma.user.findUnique({
+      where: {
+        username: req.body.username,
+      },
+    });
 
-  const isValid = await comparePasswords(req.body.password, user.password);
+    const isValid = await comparePasswords(req.body.password, user.password);
 
-  if (!isValid) {
-    res.status(401);
-    res.json({ msg: "Unauthorized" });
-    return;
+    if (!isValid) {
+      res.status(401);
+      res.json({ msg: "Unauthorized" });
+      return;
+    }
+
+    const token = createJWT(user);
+    res.cookie("auth-", token, {
+      maxAge: 3600000,
+    });
+    res.json({ token });
+  } catch (err) {
+    next(err);
   }
-
-  const token = createJWT(user);
-  res.cookie("auth-", token, {
-    maxAge: 3600000,
-  });
-  res.json({ token });
 };
