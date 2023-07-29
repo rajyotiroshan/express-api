@@ -9,7 +9,7 @@ import prisma from "../modules/db";
  * @param req
  * @param res
  */
-export const getOneUpdate = async (req, res) => {
+export const getOneUpdate = async (req, res,next) => {
   const updatedData = await prisma.update.findUnique({
     where: {
       id: req.params.id,
@@ -26,7 +26,7 @@ export const getOneUpdate = async (req, res) => {
  * @return "all updates for a user" / "all updates for a product"
  */
 
-export const getUpdates = async (req, res) => {
+export const getUpdates = async (req, res,next) => {
   //get all products for a user
   const products = await prisma.product.findMany({
     where: {
@@ -48,7 +48,7 @@ export const getUpdates = async (req, res) => {
  * @param req
  * @param res
  */
-export const createUpdate = async (req, res) => {
+export const createUpdate = async (req, res,next) => {
   const product = await prisma.product.findUnique({
     where: {
       id: req.body.prodID,
@@ -78,7 +78,7 @@ export const createUpdate = async (req, res) => {
  * @param req
  * @param res
  */
-export const updateUpdate = async (req, res) => {
+export const updateUpdate = async (req, res,next) => {
   const products = await prisma.product.findMany({
     where: {
       belongsToId: req.user.id,
@@ -111,7 +111,7 @@ export const updateUpdate = async (req, res) => {
  * @param req
  * @param res
  */
-export const deleteAnUpdate = async (req, res) => {
+export const deleteAnUpdate = async (req, res,next) => {
   const deletedUpdate = await prisma.update.delete({
     where: {
       id: req.params.id,

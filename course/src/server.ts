@@ -40,8 +40,8 @@ app.get("/", (req, res, next) => {
     throw new Error( "error")
   }, 1000) */
   //throw new Error("Synch Error handling");
-  console.log("handler start");
-  res.status(200).json({ message: "hello user" });
+
+  res.status(200).json({ msg: "hello" });
 });
 
 app.use("/api", protect, router);
